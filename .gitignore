@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# VSCode
+.vscode/
+
+# Mac
+.DS_Store
+
+# 개인 데이터 (보너스 과제용)
+*.log
