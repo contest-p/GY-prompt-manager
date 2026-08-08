@@ -137,8 +137,53 @@ def show_by_category():
 
 
 def search_prompt():
-    """검색"""
-    print("\n🔍 [검색] 기능 - 준비 중입니다.")
+    """검색 (제목 또는 태그에서 키워드 검색)"""
+    print("\n" + "=" * 50)
+    print("🔎 프롬프트 검색")
+    print("=" * 50)
+
+    # 프롬프트가 없을 때 처리
+    if len(prompts) == 0:
+        print("등록된 프롬프트가 없습니다. 먼저 추가해주세요! 📝")
+        return
+
+    # 사용자 입력
+    keyword = input("검색할 키워드를 입력하세요: ").strip()
+
+    # 빈 검색어 방어
+    if keyword == "":
+        print("⚠️ 검색어를 입력해주세요!")
+        return
+
+    # 대소문자 무시 검색을 위해 소문자로 변환
+    keyword_lower = keyword.lower()
+
+    # 검색 결과 출력
+    print(f"\n🔎 '{keyword}' 검색 결과")
+    print("-" * 50)
+
+    count = 0
+    for i, prompt in enumerate(prompts):
+        # 제목에 있는지 확인 (대소문자 무시)
+        in_title = keyword_lower in prompt["title"].lower()
+
+        # 태그에 있는지 확인 (각 태그를 소문자로 만들어 비교)
+        tags_lower = [tag.lower() for tag in prompt["tags"]]
+        in_tags = any(keyword_lower in tag for tag in tags_lower)
+
+        # 제목 or 태그에 있으면 출력
+        if in_title or in_tags:
+            star = "⭐" if prompt["favorite"] else "  "
+            print(f"{star} {i+1}. [{prompt['category']}] {prompt['title']}")
+            print(f"      태그: {', '.join(prompt['tags'])}")
+            count += 1
+
+    # 결과 요약
+    print("-" * 50)
+    if count == 0:
+        print(f"⚠️ '{keyword}' 에 대한 검색 결과가 없습니다.")
+    else:
+        print(f"총 {count}개의 프롬프트를 찾았습니다.")
 
 
 def show_detail():
