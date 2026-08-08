@@ -1,10 +1,12 @@
+import json  # JSON 파일 다루기 위한 모듈
+
 # ========================================
 # 프롬프트 관리 프로그램
 # 작성자: [박경연]
 # ========================================
 
-# 프롬프트 데이터 (리스트 안에 딕셔너리)
-prompts = [
+# 기본 프롬프트 데이터 (파일이 없을 때 사용)
+default_prompts = [
     {
         "title": "블로그 글 작성",
         "category": "글쓰기",
@@ -30,7 +32,8 @@ prompts = [
         "views": 0
     }
 ]
-
+# 실제 사용할 prompts 변수 (main에서 채워질 예정)
+prompts=[]
 
 # ========================================
 # 기능 함수들 (아직 뼈대만)
@@ -235,15 +238,97 @@ def show_detail():
 
 
 def manage_favorite():
-    """즐겨찾기 관리"""
-    print("\n⭐ [즐겨찾기 관리] 기능 - 준비 중입니다.")
+    """즐겨찾기 관리 (⭐ 추가/제거 토글)"""
+    print("\n" + "=" * 50)
+    print("⭐ 즐겨찾기 관리")
+    print("=" * 50)
+
+    # 프롬프트가 없을 때 처리
+    if len(prompts) == 0:
+        print("등록된 프롬프트가 없습니다. 먼저 추가해주세요! 📝")
+        return
+
+    # 목록 보여주기 (현재 즐겨찾기 상태 표시)
+    for i, prompt in enumerate(prompts):
+        star = "⭐" if prompt["favorite"] else "  "
+        print(f"{star} {i+1}. {prompt['title']}")
+    print("=" * 50)
+
+    # 사용자 입력 (예외 처리)
+    try:
+        number = int(input("즐겨찾기를 변경할 번호를 입력하세요: "))
+    except ValueError:
+        print("⚠️ 숫자만 입력해주세요!")
+        return
+
+    # 번호 범위 검증
+    if number < 1 or number > len(prompts):
+        print(f"⚠️ 1 ~ {len(prompts)} 사이의 번호를 입력해주세요!")
+        return
+
+    # 해당 프롬프트 선택
+    prompt = prompts[number - 1]
+
+    # 즐겨찾기 토글! (핵심 한 줄)
+    prompt["favorite"] = not prompt["favorite"]
+
+    # 결과 출력
+    if prompt["favorite"]:
+        print(f"\n✅ '{prompt['title']}' 이(가) 즐겨찾기에 추가되었습니다! ⭐")
+    else:
+        print(f"\n✅ '{prompt['title']}' 이(가) 즐겨찾기에서 제거되었습니다.")
 
 
 def show_favorites():
-    """즐겨찾기 목록"""
-    print("\n💖 [즐겨찾기 목록] 기능 - 준비 중입니다.")
+    """즐겨찾기 목록 (⭐ 표시된 것만 보기)"""
+    print("\n" + "=" * 50)
+    print("💖 즐겨찾기 목록")
+    print("=" * 50)
 
+    # 프롬프트가 없을 때 처리
+    if len(prompts) == 0:
+        print("등록된 프롬프트가 없습니다. 먼저 추가해주세요! 📝")
+        return
 
+    # 즐겨찾기만 필터링해서 출력
+    count = 0
+    for i, prompt in enumerate(prompts):
+        if prompt["favorite"]:  # 즐겨찾기인 것만!
+            print(f"⭐ {i+1}. [{prompt['category']}] {prompt['title']}")
+            print(f"      태그: {', '.join(prompt['tags'])}")
+            count += 1
+
+    print("=" * 50)
+
+    # 결과 요약
+    if count == 0:
+        print("💡 아직 즐겨찾기한 프롬프트가 없습니다.")
+        print("   메뉴 6번(즐겨찾기 관리)에서 추가해보세요!")
+    else:
+        print(f"총 {count}개의 즐겨찾기 프롬프트가 있습니다. 💖")
+
+def save_to_json():
+    """프롬프트 데이터를 JSON 파일로 저장"""
+    try:
+        with open("prompts.json", "w", encoding="utf-8") as f:
+            json.dump(prompts, f, ensure_ascii=False, indent=2)
+        print(f"\n💾 데이터가 'prompts.json' 파일에 저장되었습니다! ({len(prompts)}개)")
+    except Exception as e:
+        print(f"\n⚠️ 저장 중 오류 발생: {e}")
+
+def load_from_json():
+    """JSON 파일에서 프롬프트 데이터를 불러옵니다."""
+    try:
+        with open('prompts.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        print(f"📂 '{len(data)}개'의 프롬프트를 불러왔습니다!")
+        return data
+    except FileNotFoundError:
+        print("📁 저장된 파일이 없어 기본 데이터로 시작합니다.")
+        return None
+    except Exception as e:
+        print(f"⚠️ 불러오기 중 오류 발생: {e}")
+        return None
 # ========================================
 # 메뉴 시스템
 # ========================================
@@ -266,6 +351,15 @@ def show_menu():
 
 def main():
     """메인 실행 함수"""
+    global prompts  # 전역 변수 사용 선언
+    
+    # JSON 파일에서 데이터 불러오기
+    loaded_data = load_from_json()
+    if loaded_data is not None:
+        prompts = loaded_data
+    else:
+        prompts = default_prompts
+
     print("프로그램을 시작합니다! 👋")
 
     while True:
@@ -287,6 +381,7 @@ def main():
         elif choice == "7":
             show_favorites()
         elif choice == "0":
+            save_to_json()  # 종료 전 자동 저장! 💾
             print("\n프로그램을 종료합니다. 안녕히 가세요! 👋")
             break
         else:
