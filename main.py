@@ -69,7 +69,26 @@ def add_prompt():
 
 def show_list():
     """전체 목록 조회"""
-    print("\n📋 [전체 목록 조회] 기능 - 준비 중입니다.")
+    print("\n" + "=" * 50)
+    print("📋 전체 프롬프트 목록")
+    print("=" * 50)
+
+    # 프롬프트가 없을 때 처리
+    if len(prompts) == 0:
+        print("등록된 프롬프트가 없습니다. 먼저 추가해주세요! 📝")
+        return
+
+    # 목록 출력
+    for i, prompt in enumerate(prompts):
+        # 즐겨찾기 표시
+        star = "⭐" if prompt["favorite"] else "  "
+        
+        # 번호는 1부터 보이도록 (i+1)
+        print(f"{star} {i+1}. [{prompt['category']}] {prompt['title']}")
+        print(f"      태그: {', '.join(prompt['tags'])} | 조회수: {prompt['views']}")
+    
+    print("=" * 50)
+    print(f"총 {len(prompts)}개의 프롬프트가 있습니다.")
 
 
 def show_by_category():
