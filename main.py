@@ -38,8 +38,34 @@ prompts = [
 
 def add_prompt():
     """프롬프트 추가"""
-    print("\n📝 [프롬프트 추가] 기능 - 준비 중입니다.")
+    print("\n" + "=" * 40)
+    print("📝 새 프롬프트 추가")
+    print("=" * 40)
 
+    # 사용자 입력 받기
+    title = input("제목: ")
+    category = input("카테고리 (예: 글쓰기/코딩/번역): ")
+    content = input("내용: ")
+    tags_input = input("태그 (쉼표로 구분, 예: 블로그,SEO): ")
+
+    # 태그 처리: "블로그, SEO" → ["블로그", "SEO"]
+    tags = [tag.strip() for tag in tags_input.split(",")]
+
+    # 새 프롬프트 딕셔너리 만들기
+    new_prompt = {
+        "title": title,
+        "category": category,
+        "content": content,
+        "tags": tags,
+        "favorite": False,
+        "views": 0
+    }
+
+    # 리스트에 추가
+    prompts.append(new_prompt)
+
+    print(f"\n✅ '{title}' 프롬프트가 추가되었습니다!")
+    print(f"   현재 총 {len(prompts)}개의 프롬프트가 있습니다.")
 
 def show_list():
     """전체 목록 조회"""
