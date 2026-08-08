@@ -93,7 +93,47 @@ def show_list():
 
 def show_by_category():
     """카테고리별 조회"""
-    print("\n📂 [카테고리별 조회] 기능 - 준비 중입니다.")
+    print("\n" + "=" * 50)
+    print("📂 카테고리별 조회")
+    print("=" * 50)
+
+    # 프롬프트가 없을 때 처리
+    if len(prompts) == 0:
+        print("등록된 프롬프트가 없습니다. 먼저 추가해주세요! 📝")
+        return
+
+    # 존재하는 카테고리 목록 뽑기 (중복 제거)
+    categories = set()
+    for prompt in prompts:
+        categories.add(prompt["category"])
+
+    # 카테고리 목록 보여주기
+    print("사용 가능한 카테고리:")
+    for cat in categories:
+        print(f"  - {cat}")
+    print("=" * 50)
+
+    # 사용자 입력
+    selected = input("조회할 카테고리를 입력하세요: ").strip()
+
+    # 필터링 & 출력
+    print(f"\n📂 [{selected}] 카테고리 프롬프트")
+    print("-" * 50)
+
+    count = 0
+    for i, prompt in enumerate(prompts):
+        if prompt["category"] == selected:
+            star = "⭐" if prompt["favorite"] else "  "
+            print(f"{star} {i+1}. {prompt['title']}")
+            print(f"      태그: {', '.join(prompt['tags'])} | 조회수: {prompt['views']}")
+            count += 1
+
+    # 결과 요약
+    print("-" * 50)
+    if count == 0:
+        print(f"⚠️ '{selected}' 카테고리에 해당하는 프롬프트가 없습니다.")
+    else:
+        print(f"총 {count}개의 프롬프트를 찾았습니다.")
 
 
 def search_prompt():
