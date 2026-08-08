@@ -143,7 +143,50 @@ def search_prompt():
 
 def show_detail():
     """상세 보기"""
-    print("\n📖 [상세 보기] 기능 - 준비 중입니다.")
+    print("\n" + "=" * 50)
+    print("🔍 프롬프트 상세 보기")
+    print("=" * 50)
+
+    # 프롬프트가 없을 때 처리
+    if len(prompts) == 0:
+        print("등록된 프롬프트가 없습니다. 먼저 추가해주세요! 📝")
+        return
+
+    # 목록 간단히 보여주기 (사용자가 번호 고르도록)
+    for i, prompt in enumerate(prompts):
+        print(f"  {i+1}. {prompt['title']}")
+    print("=" * 50)
+
+    # 사용자 입력 (예외 처리 포함)
+    try:
+        number = int(input("상세 보기할 번호를 입력하세요: "))
+    except ValueError:
+        print("⚠️ 숫자만 입력해주세요!")
+        return
+
+    # 번호 범위 검증
+    if number < 1 or number > len(prompts):
+        print(f"⚠️ 1 ~ {len(prompts)} 사이의 번호를 입력해주세요!")
+        return
+
+    # 인덱스는 0부터 시작하므로 -1
+    prompt = prompts[number - 1]
+
+    # 조회수 증가!
+    prompt["views"] += 1
+
+    # 상세 정보 출력
+    star = "⭐" if prompt["favorite"] else ""
+    print("\n" + "=" * 50)
+    print(f"📌 {prompt['title']} {star}")
+    print("=" * 50)
+    print(f"📂 카테고리: {prompt['category']}")
+    print(f"🏷️  태그: {', '.join(prompt['tags'])}")
+    print(f"👁️  조회수: {prompt['views']}")
+    print("-" * 50)
+    print("📝 내용:")
+    print(prompt['content'])
+    print("=" * 50)
 
 
 def manage_favorite():
