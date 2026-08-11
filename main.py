@@ -40,22 +40,25 @@ prompts=[]
 # ========================================
 
 def add_prompt():
-    """프롬프트 추가"""
-    print("\n" + "=" * 40)
-    print("📝 새 프롬프트 추가")
-    print("=" * 40)
-
-    # 사용자 입력 받기
+    print("\n📝 새 프롬프트 추가")
     title = input("제목: ")
-    category = input("카테고리 (예: 글쓰기/코딩/번역): ")
-    content = input("내용: ")
-    tags_input = input("태그 (쉼표로 구분, 예: 블로그,SEO): ")
-
-    # 태그 처리: "블로그, SEO" → ["블로그", "SEO"]
+    category = input("카테고리: ")
+    
+    # 🆕 여러 줄 내용 입력받기
+    print("내용 입력 (끝내려면 END 입력):")
+    lines = []  # 입력한 줄들을 담을 리스트
+    while True:
+        line = input()  # 한 줄 입력받기
+        if line == "END":  # END 입력 시 종료
+            break
+        lines.append(line)  # 리스트에 줄 추가
+    content = "\n".join(lines)  # 줄바꿈으로 합치기
+    
+    tags_input = input("태그 (쉼표로 구분): ")
     tags = [tag.strip() for tag in tags_input.split(",")]
-
-    # 새 프롬프트 딕셔너리 만들기
-    new_prompt = {
+    
+    # 프롬프트 딕셔너리 생성
+    prompt = {
         "title": title,
         "category": category,
         "content": content,
@@ -63,12 +66,9 @@ def add_prompt():
         "favorite": False,
         "views": 0
     }
-
-    # 리스트에 추가
-    prompts.append(new_prompt)
-
-    print(f"\n✅ '{title}' 프롬프트가 추가되었습니다!")
-    print(f"   현재 총 {len(prompts)}개의 프롬프트가 있습니다.")
+    
+    prompts.append(prompt)
+    print("✅ 저장 완료!")
 
 def show_list():
     """전체 목록 조회"""
