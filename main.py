@@ -329,6 +329,32 @@ def load_from_json():
     except Exception as e:
         print(f"⚠️ 불러오기 중 오류 발생: {e}")
         return None
+    
+def export_to_markdown():
+    """프롬프트를 마크다운 파일로 내보내기"""
+    if not prompts:
+        print("❌ 내보낼 프롬프트가 없습니다!")
+        return
+    
+    with open("prompts.md", "w", encoding="utf-8") as f:
+        # 제목 작성
+        f.write("# 📚 나의 프롬프트 모음집\n\n")
+        f.write(f"총 {len(prompts)}개의 프롬프트\n\n")
+        f.write("---\n\n")
+        
+        # 각 프롬프트 작성
+        for i, prompt in enumerate(prompts, 1):
+            # 즐겨찾기 표시
+            star = " ⭐" if prompt["favorite"] else ""
+            
+            f.write(f"## {i}. {prompt['title']}{star}\n\n")
+            f.write(f"- **카테고리**: {prompt['category']}\n")
+            f.write(f"- **조회수**: {prompt['views']}\n\n")
+            f.write(f"**내용:**\n\n")
+            f.write(f"```\n{prompt['content']}\n```\n\n")
+            f.write("---\n\n")
+    
+    print("✅ prompts.md 파일로 내보내기 완료!")
 # ========================================
 # 메뉴 시스템
 # ========================================
@@ -344,7 +370,8 @@ def show_menu():
     print("4. 검색")
     print("5. 상세 보기")
     print("6. 즐겨찾기 관리")
-    print("7. 즐겨찾기 목록")
+    print("7. 즐겨찾기 목록 보기")
+    print("8. 마크다운으로 내보내기")
     print("0. 종료")
     print("=" * 40)
 
@@ -380,6 +407,8 @@ def main():
             manage_favorite()
         elif choice == "7":
             show_favorites()
+        elif choice == "8":
+            export_to_markdown() 
         elif choice == "0":
             save_to_json()  # 종료 전 자동 저장! 💾
             print("\n프로그램을 종료합니다. 안녕히 가세요! 👋")
