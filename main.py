@@ -355,6 +355,80 @@ def export_to_markdown():
             f.write("---\n\n")
     
     print("✅ prompts.md 파일로 내보내기 완료!")
+
+def edit_prompt():
+    """프롬프트 수정 기능"""
+    if not prompts:
+        print("\n❌ 저장된 프롬프트가 없습니다.")
+        return
+    
+    # 목록 먼저 보여주기
+    print("\n=== 📝 프롬프트 수정 ===")
+    for i, p in enumerate(prompts, 1):
+        print(f"{i}. {p['title']}")
+    
+    # 수정할 번호 입력
+    try:
+        num = int(input("\n수정할 프롬프트 번호: "))
+        if num < 1 or num > len(prompts):
+            print("❌ 잘못된 번호입니다.")
+            return
+    except ValueError:
+        print("❌ 숫자를 입력해주세요.")
+        return
+    
+    # 선택한 프롬프트
+    target = prompts[num - 1]
+    print(f"\n현재 제목: {target['title']}")
+    print(f"현재 내용: {target['content']}")
+    print(f"현재 카테고리: {target['category']}")
+    
+    # 새 값 입력 (엔터만 치면 유지)
+    print("\n(수정하지 않으려면 엔터만 누르세요)")
+    new_title = input("새 제목: ").strip()
+    new_content = input("새 내용: ").strip()
+    new_category = input("새 카테고리: ").strip()
+    
+    # 입력한 것만 업데이트
+    if new_title:
+        target['title'] = new_title
+    if new_content:
+        target['content'] = new_content
+    if new_category:
+        target['category'] = new_category
+    
+    print("\n✅ 수정 완료!")
+
+def delete_prompt():
+    """프롬프트 삭제 기능"""
+    if not prompts:
+        print("\n❌ 저장된 프롬프트가 없습니다.")
+        return
+    
+    # 목록 보여주기
+    print("\n=== 🗑️ 프롬프트 삭제 ===")
+    for i, p in enumerate(prompts, 1):
+        print(f"{i}. {p['title']}")
+    
+    # 삭제할 번호 입력
+    try:
+        num = int(input("\n삭제할 프롬프트 번호: "))
+        if num < 1 or num > len(prompts):
+            print("❌ 잘못된 번호입니다.")
+            return
+    except ValueError:
+        print("❌ 숫자를 입력해주세요.")
+        return
+    
+    # 확인 받기 (실수 방지!)
+    target = prompts[num - 1]
+    confirm = input(f"\n정말 '{target['title']}'을(를) 삭제할까요? (y/n): ")
+    
+    if confirm.lower() == 'y':
+        prompts.pop(num - 1)  # 리스트에서 제거
+        print("✅ 삭제 완료!")
+    else:
+        print("❌ 삭제 취소됨")
 # ========================================
 # 메뉴 시스템
 # ========================================
@@ -372,6 +446,8 @@ def show_menu():
     print("6. 즐겨찾기 관리")
     print("7. 즐겨찾기 목록 보기")
     print("8. 마크다운으로 내보내기")
+    print("9. 프롬프트 수정 ✏️")
+    print("10. 프롬프트 삭제 🗑️")
     print("0. 종료")
     print("=" * 40)
 
@@ -409,6 +485,10 @@ def main():
             show_favorites()
         elif choice == "8":
             export_to_markdown() 
+        elif choice == "9":
+            edit_prompt()
+        elif choice == "10":
+            delete_prompt()
         elif choice == "0":
             save_to_json()  # 종료 전 자동 저장! 💾
             print("\n프로그램을 종료합니다. 안녕히 가세요! 👋")
