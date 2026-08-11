@@ -32,15 +32,5 @@
     ],
     "favorite": false,
     "views": 0
-  },
-  {
-    "title": "JSON돼라",
-    "category": "코딩",
-    "content": "돼라",
-    "tags": [
-      "돼라"
-    ],
-    "favorite": false,
-    "views": 0
   }
 ]
